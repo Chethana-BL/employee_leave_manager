@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/absence_bloc.dart';
-import 'repository/absence_repository.dart';
+import 'repository/absence_repository_factory.dart';
 import 'screens/absence_screen.dart';
 
 void main() {
@@ -20,7 +20,8 @@ class AbsenceManagerApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
       ),
       home: BlocProvider(
-        create: (context) => AbsenceBloc(repository: AbsenceRepository()),
+        create: (context) => AbsenceBloc(
+            repository: AbsenceRepositoryFactory.create(DataSourceType.mock)),
         child: const AbsenceScreen(),
       ),
     );

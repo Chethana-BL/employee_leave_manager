@@ -7,9 +7,10 @@ import '../bloc/absence_state.dart';
 import '../models/absence_status.dart';
 import '../models/absence_type.dart';
 import '../models/member.dart';
-import '../repository/absence_repository.dart';
+import '../repository/absence_repository_factory.dart';
 import '../widgets/absence_data_table.dart';
 import '../widgets/absence_filter.dart';
+import '../widgets/absence_overview.dart';
 import '../widgets/page_controls.dart';
 
 class AbsenceScreen extends StatefulWidget {
@@ -55,7 +56,8 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
 
   /// Storing members locally to support filtering UI. In a larger app, this could move to a dedicated bloc/provider.
   void _loadMembers() async {
-    final members = await AbsenceRepository().fetchMembers();
+    final members = await AbsenceRepositoryFactory.create(DataSourceType.mock)
+        .fetchMembers();
     setState(() {
       allMembers = members;
     });
@@ -123,9 +125,10 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
 
                   return Column(
                     children: [
-                      Center(
-                        child: Text(
-                            '${state.fromIndex + 1} - ${state.toIndex} of ${state.totalItems} absences'),
+                      AbsenceOverview(
+                        fromIndex: state.fromIndex + 1,
+                        toIndex: state.toIndex,
+                        totalItems: state.totalItems,
                       ),
                       const Divider(height: 24),
                       // Absence data table

@@ -1,5 +1,6 @@
 import 'package:employee_leave_manager/models/member.dart';
 import 'package:employee_leave_manager/repository/absence_repository.dart';
+import 'package:employee_leave_manager/repository/absence_repository_factory.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -9,7 +10,7 @@ void main() {
   late AbsenceRepository repository;
 
   setUp(() {
-    repository = AbsenceRepository();
+    repository = AbsenceRepositoryFactory.create(DataSourceType.mock);
   });
 
   group('AbsenceRepository', () {
