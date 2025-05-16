@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'bloc/absence_bloc.dart';
+import 'repository/absence_repository.dart';
+import 'screens/absence_screen.dart';
 
 void main() {
   runApp(const AbsenceManagerApp());
@@ -14,22 +19,9 @@ class AbsenceManagerApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
       ),
-      home: const DummyHomePage(),
-    );
-  }
-}
-
-class DummyHomePage extends StatelessWidget {
-  const DummyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Absence Manager'),
-      ),
-      body: const Center(
-        child: Text('Welcome to Absence Manager!'),
+      home: BlocProvider(
+        create: (context) => AbsenceBloc(repository: AbsenceRepository()),
+        child: const AbsenceScreen(),
       ),
     );
   }
