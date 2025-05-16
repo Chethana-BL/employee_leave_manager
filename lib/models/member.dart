@@ -18,6 +18,15 @@ class Member {
     required this.userId,
   });
 
+  factory Member.empty() {
+    return Member(
+      crewId: 0,
+      id: 0,
+      image: '',
+      name: 'Unknown',
+      userId: 0,
+    );
+  }
   final int crewId;
   final int id;
   final String image;

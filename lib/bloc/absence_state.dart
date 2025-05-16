@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
-
+import 'package:flutter/material.dart';
 import '../models/absence.dart';
+import '../models/absence_status.dart';
+import '../models/absence_type.dart';
+import '../models/member.dart';
 
-/// AbsenceState: Represents the state of the absence data in the application.
 abstract class AbsenceState extends Equatable {
   const AbsenceState();
 
@@ -22,6 +24,10 @@ class AbsenceLoaded extends AbsenceState {
     required this.totalItems,
     required this.fromIndex,
     required this.toIndex,
+    this.typeFilter,
+    this.statusFilter,
+    this.memberFilter,
+    this.dateRangeFilter,
   });
   final List<Absence> currentPageAbsences;
   final int currentPage;
@@ -29,6 +35,10 @@ class AbsenceLoaded extends AbsenceState {
   final int totalItems;
   final int fromIndex;
   final int toIndex;
+  final AbsenceType? typeFilter;
+  final AbsenceStatus? statusFilter;
+  final DateTimeRange? dateRangeFilter;
+  final Member? memberFilter;
 
   @override
   List<Object?> get props => [
@@ -37,6 +47,9 @@ class AbsenceLoaded extends AbsenceState {
         totalItems,
         fromIndex,
         toIndex,
+        typeFilter,
+        statusFilter,
+        dateRangeFilter,
       ];
 }
 
