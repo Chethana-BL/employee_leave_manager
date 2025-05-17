@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/absence_bloc.dart';
 import '../bloc/absence_event.dart';
 import '../bloc/absence_state.dart';
-import '../models/absence_status.dart';
-import '../models/absence_type.dart';
+import '../models/filters/absence_filter_model.dart';
 import '../models/member.dart';
 import '../repository/absence_repository_factory.dart';
 import '../widgets/absence_data_table.dart';
@@ -22,10 +21,7 @@ class AbsenceScreen extends StatefulWidget {
 }
 
 class _AbsenceScreenState extends State<AbsenceScreen> {
-  AbsenceType? selectedTypeFilter;
-  AbsenceStatus? selectedStatusFilter;
-  DateTimeRange? selectedDateRange;
-  Member? selectedMemberFilter;
+  AbsenceFilterModel currentFilters = AbsenceFilterModel();
   List<Member> allMembers = [];
   int _currentPage = 0;
 
@@ -40,10 +36,7 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
     context.read<AbsenceBloc>().add(
           LoadAbsences(
             page: _currentPage,
-            typeFilter: selectedTypeFilter,
-            statusFilter: selectedStatusFilter,
-            dateRangeFilter: selectedDateRange,
-            memberFilter: selectedMemberFilter,
+            filters: currentFilters,
           ),
         );
   }
@@ -66,10 +59,7 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
 
   void _resetFilters() {
     setState(() {
-      selectedTypeFilter = null;
-      selectedStatusFilter = null;
-      selectedMemberFilter = null;
-      selectedDateRange = null;
+      currentFilters = AbsenceFilterModel();
       _currentPage = 0;
     });
     _loadAbsences();
@@ -78,33 +68,31 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Absence Manager'),
-      ),
+      appBar: AppBar(title: const Text('Absence Manager')),
       body: Column(
         children: [
           const SizedBox(height: 10),
           // 🧩 Filter bar
           AbsenceFilter(
-            selectedType: selectedTypeFilter,
-            selectedStatus: selectedStatusFilter,
-            selectedDateRange: selectedDateRange,
-            selectedEmployee: selectedMemberFilter,
+            selectedType: currentFilters.type,
+            selectedStatus: currentFilters.status,
+            selectedDateRange: currentFilters.dateRange,
+            selectedEmployee: currentFilters.employee,
             allMembers: allMembers,
             onTypeChanged: (type) {
-              setState(() => selectedTypeFilter = type);
+              setState(() => currentFilters.type = type);
               _triggerFilter();
             },
             onStatusChanged: (status) {
-              setState(() => selectedStatusFilter = status);
+              setState(() => currentFilters.status = status);
               _triggerFilter();
             },
             onDateRangeChanged: (range) {
-              setState(() => selectedDateRange = range);
+              setState(() => currentFilters.dateRange = range);
               _triggerFilter();
             },
             onEmployeeChanged: (member) {
-              setState(() => selectedMemberFilter = member);
+              setState(() => currentFilters.employee = member);
               _triggerFilter();
             },
             onClearFilters: _resetFilters,
@@ -146,15 +134,11 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
                         currentPage: state.currentPage,
                         totalPages: state.totalPages,
                         onNextPage: () {
-                          setState(() {
-                            _currentPage++;
-                          });
+                          setState(() => _currentPage++);
                           _loadAbsences();
                         },
                         onPreviousPage: () {
-                          setState(() {
-                            _currentPage--;
-                          });
+                          setState(() => _currentPage--);
                           _loadAbsences();
                         },
                       ),
