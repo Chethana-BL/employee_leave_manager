@@ -1,8 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import '../models/absence_status.dart';
-import '../models/absence_type.dart';
-import '../models/member.dart';
+import '../models/filters/absence_filter_model.dart';
 
 abstract class AbsenceEvent extends Equatable {
   const AbsenceEvent();
@@ -13,26 +10,13 @@ abstract class AbsenceEvent extends Equatable {
 
 /// LoadAbsences: Event to load absences.
 /// This event is triggered when the user wants to load a specific page of absences.
+
 class LoadAbsences extends AbsenceEvent {
-  const LoadAbsences({
-    required this.page,
-    this.typeFilter,
-    this.statusFilter,
-    this.memberFilter,
-    this.dateRangeFilter,
-  });
+  const LoadAbsences({required this.page, required this.filters});
+
   final int page;
-  final AbsenceType? typeFilter;
-  final AbsenceStatus? statusFilter;
-  final DateTimeRange? dateRangeFilter;
-  final Member? memberFilter;
+  final AbsenceFilterModel filters;
 
   @override
-  List<Object?> get props => [
-        page,
-        typeFilter,
-        dateRangeFilter,
-        statusFilter,
-        memberFilter,
-      ];
+  List<Object?> get props => [page, filters];
 }

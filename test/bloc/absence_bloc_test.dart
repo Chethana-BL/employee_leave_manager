@@ -5,6 +5,7 @@ import 'package:employee_leave_manager/bloc/absence_state.dart';
 import 'package:employee_leave_manager/models/absence.dart';
 import 'package:employee_leave_manager/models/absence_status.dart';
 import 'package:employee_leave_manager/models/absence_type.dart';
+import 'package:employee_leave_manager/models/filters/absence_filter_model.dart';
 import 'package:employee_leave_manager/models/member.dart';
 import 'package:employee_leave_manager/repository/absence_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,7 +57,8 @@ void main() {
 
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadAbsences(page: 0)),
+      act: (bloc) =>
+          bloc.add(LoadAbsences(page: 0, filters: AbsenceFilterModel())),
       expect: () => [
         AbsenceLoading(),
         AbsenceLoaded(
@@ -78,7 +80,8 @@ void main() {
 
         return bloc;
       },
-      act: (bloc) => bloc.add(const LoadAbsences(page: 1)),
+      act: (bloc) =>
+          bloc.add(LoadAbsences(page: 1, filters: AbsenceFilterModel())),
       expect: () => [
         AbsenceLoading(),
         isA<AbsenceError>(),

@@ -42,9 +42,6 @@ class AbsenceBloc extends Bloc<AbsenceEvent, AbsenceState> {
         totalItems: filteredAbsences.length,
         fromIndex: paginatedData.fromIndex,
         toIndex: paginatedData.toIndex,
-        typeFilter: event.typeFilter,
-        statusFilter: event.statusFilter,
-        dateRangeFilter: event.dateRangeFilter,
       ));
     } catch (e) {
       emit(AbsenceError('Failed to load absences: $e'));
@@ -56,27 +53,28 @@ class AbsenceBloc extends Bloc<AbsenceEvent, AbsenceState> {
   List<Absence> _applyFilters(List<Absence> absences, LoadAbsences event) {
     var filtered = [...absences];
 
-    if (event.typeFilter != null) {
-      filtered = filtered.where((a) => a.type == event.typeFilter).toList();
+    if (event.filters.type != null) {
+      filtered = filtered.where((a) => a.type == event.filters.type).toList();
     }
 
-    if (event.statusFilter != null) {
-      filtered = filtered.where((a) => a.status == event.statusFilter).toList();
+    if (event.filters.status != null) {
+      filtered =
+          filtered.where((a) => a.status == event.filters.status).toList();
     }
 
-    if (event.memberFilter != null) {
+    if (event.filters.employee != null) {
       filtered = filtered
-          .where((a) => a.member.userId == event.memberFilter!.userId)
+          .where((a) => a.member.userId == event.filters.employee!.userId)
           .toList();
     }
 
-    if (event.dateRangeFilter != null) {
+    if (event.filters.dateRange != null) {
       filtered = filtered.where((a) {
         final start = a.startDate;
-        return start.isAfter(event.dateRangeFilter!.start
+        return start.isAfter(event.filters.dateRange!.start
                 .subtract(const Duration(days: 1))) &&
             start.isBefore(
-                event.dateRangeFilter!.end.add(const Duration(days: 1)));
+                event.filters.dateRange!.end.add(const Duration(days: 1)));
       }).toList();
     }
 
