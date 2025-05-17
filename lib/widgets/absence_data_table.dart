@@ -33,6 +33,17 @@ class AbsenceDataTable extends StatelessWidget {
     return "${end.difference(start).inDays + 1} ${end.difference(start).inDays == 0 ? 'day' : 'days'}";
   }
 
+  Color _statusColor(AbsenceStatus status) {
+    switch (status) {
+      case AbsenceStatus.confirmed:
+        return Colors.teal;
+      case AbsenceStatus.rejected:
+        return Colors.red;
+      case AbsenceStatus.requested:
+        return Colors.orange;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -67,13 +78,37 @@ class AbsenceDataTable extends StatelessWidget {
                 DataCell(Text(_formatDate(absence.endDate))),
                 DataCell(
                     Text(_calculateDays(absence.startDate, absence.endDate))),
-                DataCell(Text(absence.memberNote?.isNotEmpty == true
-                    ? absence.memberNote!
-                    : '-')),
-                DataCell(Text(absence.status.label)),
-                DataCell(Text(absence.admitterNote?.isNotEmpty == true
-                    ? absence.admitterNote!
-                    : '-')),
+                DataCell(SizedBox(
+                  width: 200,
+                  child: Text(
+                    absence.memberNote?.isNotEmpty == true
+                        ? absence.memberNote!
+                        : '-',
+                    maxLines: 2,
+                  ),
+                )),
+                DataCell(
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Text(
+                      absence.status.label,
+                      style: TextStyle(
+                        color: _statusColor(absence.status),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                DataCell(SizedBox(
+                  width: 200,
+                  child: Text(
+                    absence.admitterNote?.isNotEmpty == true
+                        ? absence.admitterNote!
+                        : '-',
+                    maxLines: 2,
+                  ),
+                )),
               ],
             );
           }).toList(),
