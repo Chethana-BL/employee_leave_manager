@@ -9,10 +9,12 @@ import '../models/member.dart';
 import '../repository/absence_repository_factory.dart';
 import '../widgets/absence_data_table.dart';
 import '../widgets/absence_overview.dart';
+import '../widgets/error_message_widget.dart';
 import '../widgets/export_ical_button.dart';
 import '../widgets/filters/filter_applied_chips.dart';
 import '../widgets/filters/filter_button.dart';
 import '../widgets/filters/filter_dialog.dart';
+import '../widgets/no_absences_found.dart';
 import '../widgets/page_controls.dart';
 
 class AbsenceScreen extends StatefulWidget {
@@ -121,10 +123,12 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
                 if (state is AbsenceLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is AbsenceError) {
-                  return Center(child: Text('Error: ${state.message}'));
+                  return ErrorMessageWidget(
+                    onRetry: () => _loadAbsences(),
+                  );
                 } else if (state is AbsenceLoaded) {
                   if (state.currentPageAbsences.isEmpty) {
-                    return const Center(child: Text('No absences found.'));
+                    return const NoAbsencesFound();
                   }
 
                   return Column(
@@ -134,7 +138,7 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
                         toIndex: state.toIndex,
                         totalItems: state.totalItems,
                       ),
-                      const Divider(height: 24),
+
                       // Absence data table
                       AbsenceDataTable(
                         absences: state.currentPageAbsences,
@@ -158,7 +162,12 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
                         },
                       ),
                       const SizedBox(height: 10),
-                      ExportAbsencesButton(absences: state.currentPageAbsences)
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: ExportAbsencesButton(
+                          absences: state.currentPageAbsences,
+                        ),
+                      ),
                     ],
                   );
                 }
