@@ -8,9 +8,11 @@ import '../models/filters/absence_filter_model.dart';
 import '../models/member.dart';
 import '../repository/absence_repository_factory.dart';
 import '../widgets/absence_data_table.dart';
-import '../widgets/absence_filter.dart';
 import '../widgets/absence_overview.dart';
 import '../widgets/export_ical_button.dart';
+import '../widgets/filters/filter_applied_chips.dart';
+import '../widgets/filters/filter_button.dart';
+import '../widgets/filters/filter_dialog.dart';
 import '../widgets/page_controls.dart';
 
 class AbsenceScreen extends StatefulWidget {
@@ -41,8 +43,9 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
         );
   }
 
-  void _triggerFilter() {
+  void _triggerFilter(AbsenceFilterModel updatedFilters) {
     setState(() {
+      currentFilters = updatedFilters;
       _currentPage = 0;
     });
     _loadAbsences();
@@ -57,45 +60,57 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
     });
   }
 
-  void _resetFilters() {
-    setState(() {
-      currentFilters = AbsenceFilterModel();
-      _currentPage = 0;
-    });
-    _loadAbsences();
+  void _showFilterDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return FilterDialog(
+          allMembers: allMembers,
+          initialFilters: currentFilters,
+          onClear: () {
+            Navigator.of(context).pop();
+            _triggerFilter(AbsenceFilterModel());
+          },
+          onApply: (filters) {
+            Navigator.of(context).pop();
+            _triggerFilter(filters);
+          },
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final activeFilterCount = currentFilters.activeCount;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Absence Manager')),
       body: Column(
         children: [
           const SizedBox(height: 10),
-          // 🧩 Filter bar
-          AbsenceFilter(
-            selectedType: currentFilters.type,
-            selectedStatus: currentFilters.status,
-            selectedDateRange: currentFilters.dateRange,
-            selectedEmployee: currentFilters.employee,
-            allMembers: allMembers,
-            onTypeChanged: (type) {
-              setState(() => currentFilters.type = type);
-              _triggerFilter();
-            },
-            onStatusChanged: (status) {
-              setState(() => currentFilters.status = status);
-              _triggerFilter();
-            },
-            onDateRangeChanged: (range) {
-              setState(() => currentFilters.dateRange = range);
-              _triggerFilter();
-            },
-            onEmployeeChanged: (member) {
-              setState(() => currentFilters.employee = member);
-              _triggerFilter();
-            },
-            onClearFilters: _resetFilters,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilterButton(
+                    activeFilterCount: activeFilterCount,
+                    onPressed: _showFilterDialog,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilterAppliedChips(
+                    filters: currentFilters,
+                    onFilterChanged: (newFilters) => _triggerFilter(newFilters),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(width: 10),
           const Divider(height: 24),
