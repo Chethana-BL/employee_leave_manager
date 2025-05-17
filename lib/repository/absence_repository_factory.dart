@@ -14,7 +14,8 @@ class AbsenceRepositoryFactory {
       case DataSourceType.mock:
         return MockAbsenceRepository();
       case DataSourceType.api:
-        return ApiAbsenceRepository();
+        return ApiAbsenceRepository(
+            baseUrl: 'https://leave-manager-backend.onrender.com');
     }
   }
 }

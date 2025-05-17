@@ -21,7 +21,7 @@ class AbsenceManagerApp extends StatelessWidget {
       ),
       home: BlocProvider(
         create: (context) => AbsenceBloc(
-            repository: AbsenceRepositoryFactory.create(DataSourceType.mock)),
+            repository: AbsenceRepositoryFactory.create(DataSourceType.api)),
         child: const AbsenceScreen(),
       ),
     );

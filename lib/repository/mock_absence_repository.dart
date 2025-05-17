@@ -10,6 +10,7 @@ import 'absence_repository.dart';
 const absencesPath = 'assets/mock_data/absences.json';
 const membersPath = 'assets/mock_data/members.json';
 
+/// Mock implementation of AbsenceRepository. This class simulates fetching the data from local JSON files.
 class MockAbsenceRepository implements AbsenceRepository {
   @override
   Future<List<Absence>> fetchAbsences() async {

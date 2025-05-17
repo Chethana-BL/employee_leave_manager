@@ -57,7 +57,7 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
 
   /// Storing members locally to support filtering UI. In a larger app, this could move to a dedicated bloc/provider.
   void _loadMembers() async {
-    final members = await AbsenceRepositoryFactory.create(DataSourceType.mock)
+    final members = await AbsenceRepositoryFactory.create(DataSourceType.api)
         .fetchMembers();
     setState(() {
       allMembers = members;
