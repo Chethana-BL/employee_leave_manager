@@ -11,7 +11,7 @@ import '../repository/absence_repository_factory.dart';
 import '../widgets/absence_data_table.dart';
 import '../widgets/absence_filter.dart';
 import '../widgets/absence_overview.dart';
-import '../widgets/export_iCal_button.dart';
+import '../widgets/export_ical_button.dart';
 import '../widgets/page_controls.dart';
 
 class AbsenceScreen extends StatefulWidget {
