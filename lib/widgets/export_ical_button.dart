@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/absence.dart';
-import '../services/ical_export_service.dart';
+import '../services/ical_export_factory.dart';
 
 class ExportAbsencesButton extends StatelessWidget {
   const ExportAbsencesButton({
@@ -19,7 +19,7 @@ class ExportAbsencesButton extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: FloatingActionButton(
           onPressed: () async {
-            final service = ICalExportService();
+            final service = createICalExportService();
             await service.exportAbsencesToICal(absences);
 
             if (context.mounted) {

@@ -1,27 +1,12 @@
-import 'dart:io';
-import 'package:employee_leave_manager/models/absence_status.dart';
-import 'package:employee_leave_manager/models/absence_type.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../models/absence.dart';
+import '../models/absence_status.dart';
+import '../models/absence_type.dart';
 
-class ICalExportService {
-  /// Export multiple absence events into a single .ics file
-  Future<void> exportAbsencesToICal(List<Absence> absences) async {
-    final icsContent = generateICalContent(absences);
-    final file = await saveToFile(icsContent);
+/// Abstract class for exporting absences to iCal format.
+/// This class provides a method to generate iCal content from a list of absences.
+abstract class ICalExportService {
+  Future<void> exportAbsencesToICal(List<Absence> absences);
 
-    await SharePlus.instance.share(
-      ShareParams(
-        title: 'Absence Calendar',
-        text: 'Here are your absences in iCal format.',
-        files: [XFile(file.path)],
-      ),
-    );
-  }
-
-  /// Generate iCal content with multiple events
   String generateICalContent(List<Absence> absences) {
     final buffer = StringBuffer();
     buffer.writeln('BEGIN:VCALENDAR');
@@ -46,13 +31,5 @@ class ICalExportService {
 
   String formatDate(DateTime dt) {
     return '${dt.toUtc().toIso8601String().replaceAll('-', '').replaceAll(':', '').split('.').first}Z';
-  }
-
-  Future<File> saveToFile(String content) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final timestamp = DateFormat('yyyyMMddTHHmmss').format(DateTime.now());
-    final filePath = '${directory.path}/absences_$timestamp.ics';
-    final file = File(filePath);
-    return file.writeAsString(content);
   }
 }
