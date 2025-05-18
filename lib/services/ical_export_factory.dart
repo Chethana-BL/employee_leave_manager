@@ -1,8 +1,8 @@
 import 'ical_export_service.dart';
 import 'ical_export_service_mobile.dart'
-    if (dart.library.io) 'ical_export_service__mobile.dart';
+    if (dart.library.io) 'ical_export_service_mobile.dart';
 import 'ical_export_service_web.dart'
-    if (dart.library.html) 'ical_export_service__web.dart';
+    if (dart.library.html) 'ical_export_service_web.dart';
 
 /// Factory function to create an instance of [ICalExportService].
 /// It checks the platform at runtime and returns the appropriate implementation.
