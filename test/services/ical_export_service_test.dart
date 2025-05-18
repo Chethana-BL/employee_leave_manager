@@ -1,47 +1,22 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:employee_leave_manager/models/absence.dart';
 import 'package:employee_leave_manager/models/absence_status.dart';
 import 'package:employee_leave_manager/models/absence_type.dart';
 import 'package:employee_leave_manager/models/member.dart';
 import 'package:employee_leave_manager/services/ical_export_service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 
-class MockDirectory extends Fake implements Directory {
+class MockICalExportService extends ICalExportService {
   @override
-  String get path => '/mock/path';
-}
-
-class MockFile extends Fake implements File {
-  String writtenContent = '';
-
-  @override
-  Future<File> writeAsString(
-    String contents, {
-    Encoding encoding = utf8,
-    bool flush = false,
-    FileMode mode = FileMode.write,
-  }) async {
-    // Simulate file write and return a mock file reference
-    return this;
+  Future<void> exportAbsencesToICal(List<Absence> absences) async {
+    // No-op for testing
   }
-
-  @override
-  String get path => '/mock/path/absences_20250516T120000.ics';
 }
 
 void main() {
   late ICalExportService exportService;
 
-  setUpAll(() {
-    registerFallbackValue(MockDirectory());
-    registerFallbackValue(MockFile());
-  });
-
   setUp(() {
-    exportService = ICalExportService();
+    exportService = MockICalExportService();
   });
 
   group('ICalExportService', () {
@@ -108,6 +83,31 @@ void main() {
       final formatted = exportService.formatDate(now);
 
       expect(formatted, equals('20250516T120000Z'));
+    });
+    test('should handle absence with no member note', () {
+      final absence = Absence(
+        id: 1,
+        userId: 100,
+        startDate: DateTime.utc(2025, 6, 10, 9),
+        endDate: DateTime.utc(2025, 6, 10, 17),
+        type: AbsenceType.vacation,
+        member: Member(
+          id: 1,
+          userId: 1,
+          crewId: 1,
+          name: 'Test User 1',
+          image: '',
+        ),
+        memberNote: null,
+        admitterNote: null,
+        confirmedAt: null,
+        rejectedAt: null,
+        status: AbsenceStatus.requested,
+      );
+
+      final ics = exportService.generateICalContent([absence]);
+
+      expect(ics, contains('DESCRIPTION:No note'));
     });
   });
 }
