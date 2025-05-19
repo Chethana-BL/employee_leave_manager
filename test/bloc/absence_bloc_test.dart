@@ -137,6 +137,32 @@ void main() {
         isA<AbsenceError>(),
       ],
     );
+
+    blocTest<AbsenceBloc, AbsenceState>(
+      'emits [AbsenceLoading, AbsenceLoaded] and forces fresh fetch when forceRefresh=true',
+      build: () {
+        when(() => repository.fetchAbsences())
+            .thenAnswer((_) async => [mockAbsence]);
+
+        return bloc;
+      },
+      act: (bloc) async {
+        bloc.add(LoadAbsences(page: 0, filters: AbsenceFilterModel()));
+        await Future.delayed(Duration.zero);
+        bloc.add(LoadAbsences(
+          page: 0,
+          filters: AbsenceFilterModel(),
+          forceRefresh: true,
+        ));
+      },
+      expect: () => [
+        AbsenceLoading(),
+        isA<AbsenceLoaded>(),
+        AbsenceLoading(),
+        isA<AbsenceLoaded>(),
+      ],
+      verify: (bloc) => verify(() => repository.fetchAbsences()).called(2),
+    );
   });
 
   group('Absence Bloc Filter', () {
