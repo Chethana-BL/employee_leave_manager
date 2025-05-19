@@ -93,14 +93,15 @@ class _FilterDialogState extends State<FilterDialog> {
               title: 'Employee',
               icon: Icons.person,
               selectedValue: _filters.employee,
-              items: widget.allMembers
-                  .map(
-                    (member) => DropdownMenuItem(
-                      value: member,
-                      child: Text(member.name),
-                    ),
-                  )
-                  .toList(),
+              items: [
+                const DropdownMenuItem(value: null, child: Text('All')),
+                ...widget.allMembers.map(
+                  (member) => DropdownMenuItem(
+                    value: member,
+                    child: Text(member.name),
+                  ),
+                ),
+              ],
               onChanged: (val) => setState(() => _filters.employee = val),
               onClear: () => setState(() => _filters.employee = null),
             ),
