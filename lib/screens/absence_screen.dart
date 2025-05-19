@@ -89,93 +89,134 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Absence Manager')),
-      body: Column(
-        children: [
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FilterButton(
-                    activeFilterCount: activeFilterCount,
-                    onPressed: _showFilterDialog,
-                  ),
+      body: BlocBuilder<AbsenceBloc, AbsenceState>(
+        builder: (context, state) {
+          final bool isLoaded = state is AbsenceLoaded;
+
+          return Column(
+            children: [
+              const SizedBox(height: 10),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: FilterControls(
+                  isEnabled: isLoaded,
+                  activeFilterCount: activeFilterCount,
+                  onFilterPressed: _showFilterDialog,
+                  currentFilters: currentFilters,
+                  onFilterChanged: (newFilters) => _triggerFilter(newFilters),
                 ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: FilterAppliedChips(
-                    filters: currentFilters,
-                    onFilterChanged: (newFilters) => _triggerFilter(newFilters),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: BlocBuilder<AbsenceBloc, AbsenceState>(
-              builder: (context, state) {
-                if (state is AbsenceLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is AbsenceError) {
-                  return ErrorMessageWidget(
-                    onRetry: () => _loadAbsences(forceRefresh: true),
-                  );
-                } else if (state is AbsenceLoaded) {
-                  if (state.currentPageAbsences.isEmpty) {
-                    return const NoAbsencesFound();
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: () {
+                  if (state is AbsenceLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is AbsenceError) {
+                    return ErrorMessageWidget(
+                      onRetry: () => _loadAbsences(forceRefresh: true),
+                    );
+                  } else if (state is AbsenceLoaded) {
+                    if (state.currentPageAbsences.isEmpty) {
+                      return const NoAbsencesFound();
+                    }
+
+                    return Column(
+                      children: [
+                        AbsenceOverview(
+                          fromIndex: state.fromIndex + 1,
+                          toIndex: state.toIndex,
+                          totalItems: state.totalItems,
+                        ),
+
+                        // Absence data table
+                        AbsenceDataTable(
+                          absences: state.currentPageAbsences,
+                          currentPage: state.currentPage,
+                          totalPages: state.totalPages,
+                          totalCount: state.totalItems,
+                          itemsPerPage: 10,
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Pagination controls
+                        PageControls(
+                          currentPage: state.currentPage,
+                          totalPages: state.totalPages,
+                          onNextPage: () {
+                            setState(() => _currentPage++);
+                            _loadAbsences();
+                          },
+                          onPreviousPage: () {
+                            setState(() => _currentPage--);
+                            _loadAbsences();
+                          },
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Export to iCal
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: ExportAbsencesButton(
+                            absences: state.currentPageAbsences,
+                          ),
+                        ),
+                      ],
+                    );
                   }
 
-                  return Column(
-                    children: [
-                      AbsenceOverview(
-                        fromIndex: state.fromIndex + 1,
-                        toIndex: state.toIndex,
-                        totalItems: state.totalItems,
-                      ),
+                  return const Center(child: Text('Please wait...'));
+                }(),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
 
-                      // Absence data table
-                      AbsenceDataTable(
-                        absences: state.currentPageAbsences,
-                        currentPage: state.currentPage,
-                        totalPages: state.totalPages,
-                        totalCount: state.totalItems,
-                        itemsPerPage: 10,
-                      ),
-                      const SizedBox(height: 10),
-                      // Pagination controls
-                      PageControls(
-                        currentPage: state.currentPage,
-                        totalPages: state.totalPages,
-                        onNextPage: () {
-                          setState(() => _currentPage++);
-                          _loadAbsences();
-                        },
-                        onPreviousPage: () {
-                          setState(() => _currentPage--);
-                          _loadAbsences();
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: ExportAbsencesButton(
-                          absences: state.currentPageAbsences,
-                        ),
-                      ),
-                    ],
-                  );
-                }
+class FilterControls extends StatelessWidget {
+  const FilterControls({
+    super.key,
+    required this.isEnabled,
+    required this.activeFilterCount,
+    required this.onFilterPressed,
+    required this.currentFilters,
+    required this.onFilterChanged,
+  });
+  final bool isEnabled;
+  final int activeFilterCount;
+  final VoidCallback onFilterPressed;
+  final AbsenceFilterModel currentFilters;
+  final ValueChanged<AbsenceFilterModel> onFilterChanged;
 
-                return const Center(child: Text('Please wait...'));
-              },
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: isEnabled ? 1.0 : 0.5, // Greyed out when disabled
+      child: IgnorePointer(
+        ignoring: !isEnabled,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilterButton(
+                activeFilterCount: activeFilterCount,
+                onPressed: onFilterPressed,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: FilterAppliedChips(
+                filters: currentFilters,
+                onFilterChanged: onFilterChanged,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
