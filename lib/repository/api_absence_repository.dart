@@ -8,15 +8,18 @@ import 'absence_repository.dart';
 
 /// Implementation of AbsenceRepository that fetches data from an API.
 class ApiAbsenceRepository implements AbsenceRepository {
-  ApiAbsenceRepository({required this.baseUrl});
+  ApiAbsenceRepository({required this.baseUrl, http.Client? client})
+      : client = client ?? http.Client();
+
   final String baseUrl;
+  final http.Client client;
 
   @override
   Future<List<Absence>> fetchAbsences() async {
     final absencesUrl = Uri.parse('$baseUrl/absences');
     final members = await fetchMembers();
 
-    final response = await http.get(absencesUrl);
+    final response = await client.get(absencesUrl);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -39,7 +42,7 @@ class ApiAbsenceRepository implements AbsenceRepository {
   @override
   Future<List<Member>> fetchMembers() async {
     final membersUrl = Uri.parse('$baseUrl/members');
-    final response = await http.get(membersUrl);
+    final response = await client.get(membersUrl);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
