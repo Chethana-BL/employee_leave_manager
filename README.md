@@ -13,6 +13,8 @@ The app follows a modular and scalable architecture using the **BLoC (Business L
 - **Data Layer:** Connects to a backend API (optionally supports local JSON)  
 - **Testing:** Unit and widget tests using `flutter_test`
 
+🔍 **See [ARCHITECTURE.md](ARCHITECTURE.md)** for detailed insights into the app’s structure and data flow.
+
 ---
 
 ## ✨ Features
@@ -91,6 +93,13 @@ make check
 
 ---
 
+## 📂 Branching
+
+For details on branch naming conventions and workflow, see the [branching strategy](BRANCHING.md).  
+Following this helps keep development organized and easy to manage.
+
+---
+
 ## 📋 Assumptions & Notes
 
 - The app fetches data from a live backend API (see above).
@@ -107,5 +116,16 @@ make check
 - ✅ Applied Flutter best practices and linter rules  
 - ✅ Included tests for logic and widgets  
 - ✅ Integrated iCal generation and backend API support
+
+---
+
+## 💡 Potential Improvements
+
+- Implement pagination directly from the backend API for efficient data loading  
+- Add caching mechanisms to reduce network calls and improve performance  
+- Establish consistent theming for colors, fonts, and sizing throughout the app  
+- Externalize all user-facing strings into a dedicated resource file for easier localization and maintenance  
+- Enhance the UI to allow selecting absence entries to view detailed information (optional future feature)  
+- Expand test coverage to ensure reliability and prevent regressions  
 
 ---
