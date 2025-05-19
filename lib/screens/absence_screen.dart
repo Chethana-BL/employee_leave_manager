@@ -36,11 +36,12 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
     _loadMembers();
   }
 
-  void _loadAbsences() {
+  void _loadAbsences({bool forceRefresh = false}) {
     context.read<AbsenceBloc>().add(
           LoadAbsences(
             page: _currentPage,
             filters: currentFilters,
+            forceRefresh: forceRefresh,
           ),
         );
   }
@@ -122,7 +123,7 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is AbsenceError) {
                   return ErrorMessageWidget(
-                    onRetry: () => _loadAbsences(),
+                    onRetry: () => _loadAbsences(forceRefresh: true),
                   );
                 } else if (state is AbsenceLoaded) {
                   if (state.currentPageAbsences.isEmpty) {
