@@ -1,5 +1,13 @@
 /// Member class represents a member of a crew.
 class Member {
+  Member({
+    required this.crewId,
+    required this.id,
+    required this.image,
+    required this.name,
+    required this.userId,
+  });
+
   factory Member.fromJson(Map<String, dynamic> json) {
     return Member(
       crewId: json['crewId'],
@@ -10,14 +18,6 @@ class Member {
     );
   }
 
-  Member({
-    required this.crewId,
-    required this.id,
-    required this.image,
-    required this.name,
-    required this.userId,
-  });
-
   factory Member.empty() {
     return Member(
       crewId: 0,
@@ -27,6 +27,7 @@ class Member {
       userId: 0,
     );
   }
+
   final int crewId;
   final int id;
   final String image;
