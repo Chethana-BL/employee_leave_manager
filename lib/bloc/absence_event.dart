@@ -10,6 +10,8 @@ abstract class AbsenceEvent extends Equatable {
 
 /// LoadAbsences: Event to load absences.
 /// This event is triggered when the user wants to load a specific page of absences.
+/// The [filters] are used to filter the absences.
+/// The [page] number is used for pagination.
 
 class LoadAbsences extends AbsenceEvent {
   const LoadAbsences({required this.page, required this.filters});
