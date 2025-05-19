@@ -115,8 +115,6 @@ class _AbsenceScreenState extends State<AbsenceScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          const Divider(height: 24),
-
           Expanded(
             child: BlocBuilder<AbsenceBloc, AbsenceState>(
               builder: (context, state) {
