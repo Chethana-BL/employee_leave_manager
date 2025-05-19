@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/absence.dart';
 import '../models/paginated_result.dart';
@@ -44,6 +45,7 @@ class AbsenceBloc extends Bloc<AbsenceEvent, AbsenceState> {
         toIndex: paginatedData.toIndex,
       ));
     } catch (e) {
+      debugPrint('Failed to load absences: $e');
       emit(AbsenceError('Failed to load absences: $e'));
     }
   }
