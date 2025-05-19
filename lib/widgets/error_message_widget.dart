@@ -21,21 +21,19 @@ class ErrorMessageWidget extends StatelessWidget {
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Icon(Icons.error_outline, color: Colors.redAccent),
             const SizedBox(width: 8),
-            const Text(
-              'Oops! Something went wrong. Please try again.',
-              style: TextStyle(fontSize: 16, color: Colors.redAccent),
-              textAlign: TextAlign.center,
+            const Flexible(
+              child: Text(
+                'Oops! Something went wrong. Please try again.',
+                style: TextStyle(fontSize: 16, color: Colors.redAccent),
+                textAlign: TextAlign.center,
+              ),
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 16),
               IconButton(
-                icon: const Icon(
-                  Icons.refresh,
-                ),
+                icon: const Icon(Icons.refresh),
                 onPressed: onRetry,
               ),
             ],
