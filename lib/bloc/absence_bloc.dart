@@ -25,8 +25,8 @@ class AbsenceBloc extends Bloc<AbsenceEvent, AbsenceState> {
     emit(AbsenceLoading());
 
     try {
-      /// Load data only once if not loaded yet
-      if (_allAbsences.isEmpty) {
+      /// Force refresh if the list is empty or if the event requests a refresh
+      if (_allAbsences.isEmpty || event.forceRefresh) {
         _allAbsences = await repository.fetchAbsences();
       }
 

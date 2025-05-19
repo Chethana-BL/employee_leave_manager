@@ -14,10 +14,15 @@ abstract class AbsenceEvent extends Equatable {
 /// The [page] number is used for pagination.
 
 class LoadAbsences extends AbsenceEvent {
-  const LoadAbsences({required this.page, required this.filters});
+  const LoadAbsences({
+    required this.page,
+    required this.filters,
+    this.forceRefresh = false,
+  });
 
   final int page;
   final AbsenceFilterModel filters;
+  final bool forceRefresh;
 
   @override
   List<Object?> get props => [page, filters];
